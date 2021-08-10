@@ -51,7 +51,7 @@ else:
         rcontent = str(response.content, 'utf-8')
         msg = "\nContent: " + rcontent
         pw(msg)
-        if 'good' or 'nochg' in rcontent:
+        if 'good' or 'nochg' in rcontent: #Want to ensure the file is updated no matter what, so that we know when this was last run
             with open(ippath, 'w') as g:
                 g.write(curIP)
             if 'good' in rcontent:
