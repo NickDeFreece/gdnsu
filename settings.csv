@@ -1,5 +1,7 @@
 name,value
-hostname,
-uname,
-pwd,
-email,
+logging,True
+hostname,yourDDNSHostname
+uname,yourDDNSUsername
+pwd,yourDDNSPassword
+email,yourEmail
+lastIP,leaveBlank

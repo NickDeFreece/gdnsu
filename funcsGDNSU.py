@@ -3,8 +3,11 @@ import time
 import datetime
 import requests
 
-def getTimestamp(delta=None,mode='add'): #Ex. delta = datetime.timedelta(seconds=69)
-    t = datetime.datetime.utcnow()
+def getTimestamp(delta=None,mode='add',utc=True): #Ex. delta = datetime.timedelta(seconds=69)
+    if utc == True:
+        t = datetime.datetime.utcnow()
+    else:
+        t = datetime.datetime.now()
     st = str(t.strftime('%Y-%m-%dT%H.%M.%S.%f'))
     if delta != None:
         if mode == 'add':
@@ -15,25 +18,23 @@ def getTimestamp(delta=None,mode='add'): #Ex. delta = datetime.timedelta(seconds
     else:
         return st
 
-def writeLog(msg, path=None, timestamp=None, prnt=False, useLocalTZ=False):
-    if timestamp == None:
-        #if useLocalTZ == True:
-            #delta = datetime.timedelta(hours=7) #hours = Get local TZ's offset from system
-            #ts = getTimestamp(delta)
-            #timestamp = ts['atdelta']
-        #else:
-        timestamp = getTimestamp() #Nest this if i figure out using local TZ
-    msg = f'\n[{timestamp}] {msg}'
-    if path == None:
-        path = os.getcwd() + "\\gdnsu.log"
-    with open(path, 'a') as f:
-        f.write(msg)
-    if prnt == True:
-        print(msg)
+def log(msg, **kwargs):
+    defaultTimestamp = getTimestamp()
+    defaultPath = os.getcwd() + "/gdnsu.log"
+    settings = {
+        'print': True,
+        'write': False,
+        'time': defaultTimestamp,
+        'path': defaultPath
+    }
+    settings.update(kwargs)
 
-def pw(msg, path=None, timestamp=None):
-    print(msg)
-    writeLog(msg, path, timestamp)
+    msg = "\n[" + settings['time'] + "] " + msg
+    if settings['print'] == True:
+        print(msg)
+    if settings['write'] == True:
+        with open(settings['path'], 'a') as f:
+            f.write(msg)
 
 def csvToDictList(csvpath):
     dicts = []
@@ -101,6 +102,37 @@ def dictlistToCSV(dictlist, outpath):
     with open(outpath, 'w') as f:
         f.write(lines)
 
+def getCSVSettings(path):
+    cwd = os.getcwd()
+    if str(type(path)) != "<class 'str'>":
+        path = cwd + "/settings.csv"
+    settings = dict()
+    settingList = csvToDictList(path)
+    for d in settingList:
+        if d['value'] == "True":
+            _value = True
+        elif d['value'] == "False":
+            _value = False
+        else:
+            _value = d['value']
+        settings.update({d['name']: _value}) #This line is why settings.csv needs to keep the same header: name,value
+    return settings
+
+def setCSVSettings(newSettings, path):
+    cwd = os.getcwd()
+    if str(type(path)) != "<class 'str'>":
+        path = cwd + "/settings.csv"
+    settingList = list()
+    for n in newSettings:
+        _setting = {"name": n, "value": str(newSettings[n])}
+        settingList.append(_setting)
+    try:
+        dictlistToCSV(settingList, path)
+        success = True
+    except:
+        success = False
+    return success
+
 def doGet(uri, headers, retries=None):
     #if retries == None:
     #    retries = getSetting('retries')
@@ -141,28 +173,6 @@ def doPost(uri, headers, data=None, retries=None):
         attempt += 1
     if response == None or (response.status_code < 200 or response.status_code >= 400):
         msg = f'\n==========POST request failed after {attempt}/{retries} attempts! '
-        if response != None:
-            msg += f'\nHeaders: {response.headers}'
-            msg += f'\nBody: {response.content}'
-        else:
-            msg += "No response from endpoint!=========\n"
-    return response
-
-def doPut(uri, headers, data, retries=None):
-    #if retries == None:
-    #    retries = getSetting('retries')
-    #retries = int(retries)
-    retries = 3
-    attempt = 0
-    wait = 1
-    response = requests.put(uri, headers=headers, data=data)
-    while (response == None or (response.status_code < 200 or response.status_code >= 400)) and attempt < retries:
-        response = requests.put(uri, headers=headers, data=data)
-        time.sleep(wait)
-        wait *= 2
-        attempt += 1
-    if response == None or (response.status_code < 200 or response.status_code >= 400):
-        msg = f'\n==========PUT request failed after {attempt}/{retries} attempts! '
         if response != None:
             msg += f'\nHeaders: {response.headers}'
             msg += f'\nBody: {response.content}'
