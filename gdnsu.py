@@ -4,26 +4,35 @@ import os
 from funcsGDNSU import doGet, doPost, getTimestamp, writeLog, pw
 
 pw("\n===============Run Start===============")
-hostname = "fartss.beesnakez.net"
-uname = "Gao5f9zDwEmfq87y"
-pwd = "YKp9Odp6zumKQfVg"
-ipuri = "https://domains.google.com/checkip"
 
-msg = "Hostname: " + hostname
+#Fill in your own details here
+
+
+################################################# DO NOT EDIT BELOW THIS LINE ########################################################
+ipuri = "https://domains.google.com/checkip"
+cwd = os.getcwd()
+settingsPath = cwd + "/settings.csv"
+ippath = cwd + "\\ip.txt"
+settings = dict()
+settingList = csvToDictList(settingsPath)
+for d in settingList:
+    settings.update({d['name'], d['value']}) #This line is why settings.csv needs to keep the same header: name,value
+
+msg = "Hostname: " + settings['hostname']
 pw(msg)
 
-ippath = os.getcwd() + "\\ip.txt"
 try:
     with open(ippath, 'r') as f:
         lastIP = f.readline()
 except:
     lastIP = None
-msg = "Last IP: " + lastIP
+msg = "Last IP: " + str(lastIP)
 pw(msg)
 
+agentString = "Chrome/41.0 " + settings['email']
 headers = {
     "Host": "domains.google.com",
-    "UserAgent": "Chrome/41.0 nt04defreece@gmail.com"
+    "UserAgent": agentString
 }
 curIP = str(doGet(ipuri, headers).content, 'utf-8') #Should get current public IP
 msg = "Current IP: " + curIP
