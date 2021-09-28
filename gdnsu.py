@@ -42,7 +42,7 @@ else:
     rheaders = str(response.headers)
     rcontent = str(response.content, 'utf-8')
     msg = "Response Code: " + rcode
-    log(msg)
+    log(msg, write=settings['logging'])
 
     if response.status_code in range(200, 400):
         if 'good' in rcontent or 'nochg' in rcontent: #'nochg' in rconent means the IP was already set to what we were trying to set it to, somehow. Essentially, we made an unnecessary request to G and that should be troubleshot. Could be the last run wasn't able to update the settings file. Could be another instance of this script on your network already made the update.
