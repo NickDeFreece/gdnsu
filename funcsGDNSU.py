@@ -109,9 +109,9 @@ def getCSVSettings(path):
     settings = dict()
     settingList = csvToDictList(path)
     for d in settingList:
-        if d['value'].lower() == "True":
+        if d['value'].lower() == "true":
             _value = True
-        elif d['value'].lower() == "False":
+        elif d['value'].lower() == "false":
             _value = False
         else:
             _value = d['value']

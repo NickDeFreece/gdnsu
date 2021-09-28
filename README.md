@@ -21,5 +21,5 @@ Fill in the 'value' column according to the following:
 	pwd      : The password assigned to the host. Found in the DDNS console.
 	email    : Your email address. Used in the UserAgent string in the request headers.
 	logging  : Must be either "True" or "False", depending on if you want gdnsu to log to a file (./gdnsu.log)
-	lastIP   : Leave this blank, but it doesn't really matter. Will be updated automatically by the program.
-	           Used to check if your IP has changed. Edit this field to force the script to send an update to your DDNS host.
+	lastIP   : Leave this blank. Used to check if we need to send an update. Will be updated automatically by the program.
+	           Edit this field to force the script to send an update to your DDNS host. Don't be surprised if you get a 'no change' response though. Check your DDNS console to see if the IP already matches.
