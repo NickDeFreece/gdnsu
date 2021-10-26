@@ -3,6 +3,10 @@ A simple script to update your dynamic DNS host on our favorite not evil platfor
 
 This script is not too complicated, but only runs from command-line at this time.
 
+DEPENDECIES:
+Python 3 (Written in 3.7)
+Requests (https://docs.python-requests.org/en/latest/)
+
 MODULES:
 
 -gdnsu.py
